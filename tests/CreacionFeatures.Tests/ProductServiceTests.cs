@@ -48,13 +48,14 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_NotFound_ThrowsDomainException()
+    public async Task GetByIdAsync_NotFound_ThrowsProductNotFoundException()
     {
-        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Product?)null);
+        var id = Guid.NewGuid();
+        _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Product?)null);
 
-        Func<Task> act = () => _service.GetByIdAsync(Guid.NewGuid());
+        Func<Task> act = () => _service.GetByIdAsync(id);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*not found*");
+        await act.Should().ThrowAsync<ProductNotFoundException>();
     }
 
     [Fact]
@@ -70,33 +71,33 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_EmptyName_ThrowsDomainException()
+    public async Task CreateAsync_EmptyName_ThrowsValidationException()
     {
         var dto = new CreateProductDto { Name = "", Price = 10m };
 
         Func<Task> act = () => _service.CreateAsync(dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*name cannot be empty*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*name cannot be empty*");
     }
 
     [Fact]
-    public async Task CreateAsync_WhitespaceName_ThrowsDomainException()
+    public async Task CreateAsync_WhitespaceName_ThrowsValidationException()
     {
         var dto = new CreateProductDto { Name = "   ", Price = 10m };
 
         Func<Task> act = () => _service.CreateAsync(dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*name cannot be empty*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*name cannot be empty*");
     }
 
     [Fact]
-    public async Task CreateAsync_NegativePrice_ThrowsDomainException()
+    public async Task CreateAsync_NegativePrice_ThrowsValidationException()
     {
         var dto = new CreateProductDto { Name = "Valid", Price = -1m };
 
         Func<Task> act = () => _service.CreateAsync(dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*price cannot be negative*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*price cannot be negative*");
     }
 
     [Fact]
@@ -114,44 +115,45 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_EmptyName_ThrowsDomainException()
+    public async Task UpdateAsync_EmptyName_ThrowsValidationException()
     {
         var dto = new UpdateProductDto { Name = "", Price = 10m };
 
         Func<Task> act = () => _service.UpdateAsync(Guid.NewGuid(), dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*name cannot be empty*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*name cannot be empty*");
     }
 
     [Fact]
-    public async Task UpdateAsync_WhitespaceName_ThrowsDomainException()
+    public async Task UpdateAsync_WhitespaceName_ThrowsValidationException()
     {
         var dto = new UpdateProductDto { Name = "  ", Price = 10m };
 
         Func<Task> act = () => _service.UpdateAsync(Guid.NewGuid(), dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*name cannot be empty*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*name cannot be empty*");
     }
 
     [Fact]
-    public async Task UpdateAsync_NegativePrice_ThrowsDomainException()
+    public async Task UpdateAsync_NegativePrice_ThrowsValidationException()
     {
         var dto = new UpdateProductDto { Name = "Valid", Price = -5m };
 
         Func<Task> act = () => _service.UpdateAsync(Guid.NewGuid(), dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*price cannot be negative*");
+        await act.Should().ThrowAsync<ValidationException>().WithMessage("*price cannot be negative*");
     }
 
     [Fact]
-    public async Task UpdateAsync_NotFound_ThrowsDomainException()
+    public async Task UpdateAsync_NotFound_ThrowsProductNotFoundException()
     {
+        var id = Guid.NewGuid();
         var dto = new UpdateProductDto { Name = "Valid", Price = 10m };
-        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Product?)null);
+        _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Product?)null);
 
-        Func<Task> act = () => _service.UpdateAsync(Guid.NewGuid(), dto);
+        Func<Task> act = () => _service.UpdateAsync(id, dto);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*not found*");
+        await act.Should().ThrowAsync<ProductNotFoundException>();
     }
 
     [Fact]
@@ -167,12 +169,13 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_NotFound_ThrowsDomainException()
+    public async Task DeleteAsync_NotFound_ThrowsProductNotFoundException()
     {
-        _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Product?)null);
+        var id = Guid.NewGuid();
+        _repoMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Product?)null);
 
-        Func<Task> act = () => _service.DeleteAsync(Guid.NewGuid());
+        Func<Task> act = () => _service.DeleteAsync(id);
 
-        await act.Should().ThrowAsync<DomainException>().WithMessage("*not found*");
+        await act.Should().ThrowAsync<ProductNotFoundException>();
     }
 }

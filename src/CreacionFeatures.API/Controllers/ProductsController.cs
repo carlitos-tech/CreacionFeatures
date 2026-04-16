@@ -31,7 +31,7 @@ public class ProductsController : ControllerBase
             var product = await _service.GetByIdAsync(id);
             return Ok(product);
         }
-        catch (DomainException ex)
+        catch (ProductNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
@@ -45,7 +45,7 @@ public class ProductsController : ControllerBase
             var product = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
-        catch (DomainException ex)
+        catch (ValidationException ex)
         {
             return BadRequest(ex.Message);
         }
@@ -59,9 +59,13 @@ public class ProductsController : ControllerBase
             var product = await _service.UpdateAsync(id, dto);
             return Ok(product);
         }
-        catch (DomainException ex)
+        catch (ProductNotFoundException ex)
         {
-            return ex.Message.Contains("not found") ? NotFound(ex.Message) : BadRequest(ex.Message);
+            return NotFound(ex.Message);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 
@@ -73,7 +77,7 @@ public class ProductsController : ControllerBase
             await _service.DeleteAsync(id);
             return NoContent();
         }
-        catch (DomainException ex)
+        catch (ProductNotFoundException ex)
         {
             return NotFound(ex.Message);
         }

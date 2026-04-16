@@ -8,8 +8,6 @@ public class Product
     public decimal Price { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    private Product() { }
-
     public Product(string name, string description, decimal price)
     {
         Id = Guid.NewGuid();

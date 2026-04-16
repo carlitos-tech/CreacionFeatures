@@ -47,8 +47,9 @@ public class ProductsControllerTests
     [Fact]
     public async Task GetById_NotFound_ReturnsNotFound()
     {
+        var id = Guid.NewGuid();
         _serviceMock.Setup(s => s.GetByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new DomainException("Product with id 'xxx' was not found."));
+            .ThrowsAsync(new ProductNotFoundException(id));
 
         var result = await _controller.GetById(Guid.NewGuid());
 
@@ -72,7 +73,7 @@ public class ProductsControllerTests
     {
         var dto = new CreateProductDto { Name = "" };
         _serviceMock.Setup(s => s.CreateAsync(dto))
-            .ThrowsAsync(new DomainException("Product name cannot be empty."));
+            .ThrowsAsync(new ValidationException("Product name cannot be empty."));
 
         var result = await _controller.Create(dto);
 
@@ -98,7 +99,7 @@ public class ProductsControllerTests
         var id = Guid.NewGuid();
         var dto = new UpdateProductDto { Name = "Updated", Price = 10m };
         _serviceMock.Setup(s => s.UpdateAsync(id, dto))
-            .ThrowsAsync(new DomainException($"Product with id '{id}' was not found."));
+            .ThrowsAsync(new ProductNotFoundException(id));
 
         var result = await _controller.Update(id, dto);
 
@@ -111,7 +112,7 @@ public class ProductsControllerTests
         var id = Guid.NewGuid();
         var dto = new UpdateProductDto { Name = "", Price = 10m };
         _serviceMock.Setup(s => s.UpdateAsync(id, dto))
-            .ThrowsAsync(new DomainException("Product name cannot be empty."));
+            .ThrowsAsync(new ValidationException("Product name cannot be empty."));
 
         var result = await _controller.Update(id, dto);
 
@@ -132,8 +133,9 @@ public class ProductsControllerTests
     [Fact]
     public async Task Delete_NotFound_ReturnsNotFound()
     {
+        var id = Guid.NewGuid();
         _serviceMock.Setup(s => s.DeleteAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new DomainException("Product with id 'xxx' was not found."));
+            .ThrowsAsync(new ProductNotFoundException(id));
 
         var result = await _controller.Delete(Guid.NewGuid());
 

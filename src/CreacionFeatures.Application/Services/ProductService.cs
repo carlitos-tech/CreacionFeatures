@@ -26,16 +26,16 @@ public class ProductService : IProductService
     {
         var product = await _repository.GetByIdAsync(id);
         if (product is null)
-            throw new DomainException($"Product with id '{id}' was not found.");
+            throw new ProductNotFoundException(id);
         return product.ToDto();
     }
 
     public async Task<ProductDto> CreateAsync(CreateProductDto createDto)
     {
         if (string.IsNullOrWhiteSpace(createDto.Name))
-            throw new DomainException("Product name cannot be empty.");
+            throw new ValidationException("Product name cannot be empty.");
         if (createDto.Price < 0)
-            throw new DomainException("Product price cannot be negative.");
+            throw new ValidationException("Product price cannot be negative.");
 
         var product = new Product(createDto.Name, createDto.Description, createDto.Price);
         var created = await _repository.AddAsync(product);
@@ -45,13 +45,13 @@ public class ProductService : IProductService
     public async Task<ProductDto> UpdateAsync(Guid id, UpdateProductDto updateDto)
     {
         if (string.IsNullOrWhiteSpace(updateDto.Name))
-            throw new DomainException("Product name cannot be empty.");
+            throw new ValidationException("Product name cannot be empty.");
         if (updateDto.Price < 0)
-            throw new DomainException("Product price cannot be negative.");
+            throw new ValidationException("Product price cannot be negative.");
 
         var existing = await _repository.GetByIdAsync(id);
         if (existing is null)
-            throw new DomainException($"Product with id '{id}' was not found.");
+            throw new ProductNotFoundException(id);
 
         existing.Update(updateDto.Name, updateDto.Description, updateDto.Price);
         var updated = await _repository.UpdateAsync(existing);
@@ -62,7 +62,7 @@ public class ProductService : IProductService
     {
         var existing = await _repository.GetByIdAsync(id);
         if (existing is null)
-            throw new DomainException($"Product with id '{id}' was not found.");
+            throw new ProductNotFoundException(id);
         await _repository.DeleteAsync(id);
     }
 }
