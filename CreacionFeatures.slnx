@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CreacionFeatures.API/CreacionFeatures.API.csproj" />
+    <Project Path="src/CreacionFeatures.Application/CreacionFeatures.Application.csproj" />
+    <Project Path="src/CreacionFeatures.Domain/CreacionFeatures.Domain.csproj" />
+    <Project Path="src/CreacionFeatures.Infrastructure/CreacionFeatures.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CreacionFeatures.Tests/CreacionFeatures.Tests.csproj" />
+  </Folder>
+</Solution>
